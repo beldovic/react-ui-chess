@@ -1,0 +1,17 @@
+.grid-row{
+}
+
+.grid-light-column {
+  background-color: #ffffcc;
+  width: 86px;
+  height: 86px;
+}
+.grid-dark-column {
+  background-color: #c68c53;
+  width: 86px;
+  height: 86px;
+}
+.grid-image{
+  width: 80px;
+  height: 80px;
+}
