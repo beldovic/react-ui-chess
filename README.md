@@ -1,2 +1,2 @@
 # react-ui-chess
-Try-hard chess using react ui
+Try-hard chess using JS & react ui
