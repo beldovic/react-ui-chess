@@ -135,10 +135,13 @@ export default class App extends Component {
   }
   render() {
 
-    const { grid } = this.state;
+    const { grid, colorToMove } = this.state;
 
     return (
-      <div >
+      <div>
+        <div className="text-center">
+          <b>{`${colorToMove.toUpperCase()} to move`}</b>
+        </div>
         <div>
           {
             grid.map((row, x) =>
