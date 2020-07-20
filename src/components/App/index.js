@@ -158,13 +158,32 @@ export default class App extends Component {
 
   onClick(position) {
 
-    if (this.isPieceSelected()) {
-      const updated = this.moveCurrentPiece(position);
-      this.setState({ grid: updated, selectedPosition: null, colorToMove: this.toogleColorToMove() });
+    const { selectedPosition } = this.state;
+
+    if (selectedPosition === null) {
+      this.setState({ selectedPosition: position })
       return;
     }
 
-    this.setState({ selectedPosition: position })
+    if(selectedPosition.x === position.x && selectedPosition.y === position.y){
+      return;
+    }
+
+    const selectedColumn = this.getColumnAt(selectedPosition);
+
+    if(selectedColumn.piece === null){
+      this.setState({ selectedPosition: position })
+      return;
+    }
+
+    if (selectedColumn.piece.color !== this.state.colorToMove){
+      this.setState({selectedPosition: null});
+      return;
+    }
+
+    var updated = this.makeMove(selectedColumn, position);
+    
+    this.setState({ grid: updated, selectedPosition: null, colorToMove: this.toogleColorToMove() });
   }
 
   toogleColorToMove() {
@@ -177,32 +196,22 @@ export default class App extends Component {
     return "white";
   }
 
-  isPieceSelected() {
-    const { selectedPosition, grid, colorToMove } = this.state;
+  getColumnAt(coords){
+    
+    const { grid } = this.state;
 
-    if (selectedPosition === null) {
-      return false;
-    }
-
-    const column = grid[selectedPosition.x][selectedPosition.y];
-
-    return column.piece !== null && column.piece.color === colorToMove;
+    return grid[coords.x][coords.y];
   }
 
-  moveCurrentPiece(to) {
+  makeMove(column, to) {
 
-    const { grid, selectedPosition } = this.state;
+    const { grid } = this.state;
 
-    //we're trying to move the piece to the current location, this is not a 'move' the code handling this should not be here, MOVE!
-    if (selectedPosition.x === to.x && selectedPosition.y === to.y) {
-      return grid;
-    }
+    //TODO: clone grid? row? column?
 
-    const current = grid[selectedPosition.x][selectedPosition.y];
+    grid[to.x][to.y].piece = column.piece;
 
-    grid[to.x][to.y].piece = current.piece;
-
-    current.piece = null;
+    column.piece = null;
 
     return grid;
   }
