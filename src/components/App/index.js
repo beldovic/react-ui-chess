@@ -129,6 +129,7 @@ export default class App extends Component {
     this.state = {
       grid: chessGrid,
       selectedPosition: null,
+      highlightSelectedPosition: false,
       colorToMove: "white"
     }
   }
@@ -137,52 +138,65 @@ export default class App extends Component {
     const { grid } = this.state;
 
     return (
-      <div>
-        {
-          grid.map((row, x) =>
-            <div>
-              {
-                row.map((column, y) =>
-                  <span>
-                    <button type="button" onClick={e => this.onClick({ x: x, y: y })} className={this.isLightColumn(column) ? "grid-light-column" : "grid-dark-column"}>
-                      {column.piece !== null && <img src={column.piece.image} alt="" className="grid-image" />}
-                    </button>
-                  </span>
-                )
-              }
-            </div>
-          )
-        }
+      <div >
+        <div>
+          {
+            grid.map((row, x) =>
+              <div>
+                {
+                  row.map((column, y) =>
+                    <span>
+                      <button type="button" onClick={e => this.onClick({ x: x, y: y })} className={this.getColumnClassName(column, { x, y })}>
+                        {column.piece !== null && <img src={column.piece.image} alt="" className="grid-image" />}
+                      </button>
+                    </span>
+                  )
+                }
+              </div>
+            )
+          }
+        </div>
       </div>)
+  }
+
+  getColumnClassName(column, position) {
+    const { selectedPosition, highlightSelectedPosition } = this.state;
+
+    if (selectedPosition !== null && selectedPosition.x == position.x && selectedPosition.y === position.y && highlightSelectedPosition) {
+      return "grid-highlighed";
+    }
+
+    return this.isLightColumn(column) ? "grid-light-column" : "grid-dark-column"
   }
 
   onClick(position) {
 
-    const { selectedPosition } = this.state;
+    const { selectedPosition, grid } = this.state;
 
     if (selectedPosition === null) {
-      this.setState({ selectedPosition: position })
+      const containsPiece = grid[position.x][position.y].piece !== null;
+      this.setState({ selectedPosition: position, highlightSelectedPosition: containsPiece })
       return;
     }
 
-    if(selectedPosition.x === position.x && selectedPosition.y === position.y){
+    if (selectedPosition.x === position.x && selectedPosition.y === position.y) {
       return;
     }
 
     const selectedColumn = this.getColumnAt(selectedPosition);
 
-    if(selectedColumn.piece === null){
+    if (selectedColumn.piece === null) {
       this.setState({ selectedPosition: position })
       return;
     }
 
-    if (selectedColumn.piece.color !== this.state.colorToMove){
-      this.setState({selectedPosition: null});
+    if (selectedColumn.piece.color !== this.state.colorToMove) {
+      this.setState({ selectedPosition: null });
       return;
     }
 
     var updated = this.makeMove(selectedColumn, position);
-    
+
     this.setState({ grid: updated, selectedPosition: null, colorToMove: this.toogleColorToMove() });
   }
 
@@ -196,8 +210,8 @@ export default class App extends Component {
     return "white";
   }
 
-  getColumnAt(coords){
-    
+  getColumnAt(coords) {
+
     const { grid } = this.state;
 
     return grid[coords.x][coords.y];
