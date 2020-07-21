@@ -165,7 +165,7 @@ export default class App extends Component {
   getColumnClassName(column, position) {
     const { selectedPosition, highlightSelectedPosition } = this.state;
 
-    if (selectedPosition !== null && selectedPosition.x == position.x && selectedPosition.y === position.y && highlightSelectedPosition) {
+    if (selectedPosition !== null && selectedPosition.x === position.x && selectedPosition.y === position.y && highlightSelectedPosition) {
       return "grid-highlighed";
     }
 
@@ -198,8 +198,8 @@ export default class App extends Component {
       return;
     }
 
-    var updated = this.makeMove(selectedColumn, position);
-
+    const updated = this.makeMove(selectedColumn, position);
+    
     this.setState({ grid: updated, selectedPosition: null, colorToMove: this.toogleColorToMove() });
   }
 
