@@ -198,8 +198,15 @@ export default class App extends Component {
       return;
     }
 
+    const destinationColumn = this.getColumnAt(position);
+
+    if (destinationColumn.piece !== null && destinationColumn.piece.color === selectedColumn.piece.color) {
+      this.setState({ selectedPosition: position })
+      return;
+    }
+
     const updated = this.makeMove(selectedColumn, position);
-    
+
     this.setState({ grid: updated, selectedPosition: null, colorToMove: this.toogleColorToMove() });
   }
 
