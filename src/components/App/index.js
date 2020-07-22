@@ -265,23 +265,16 @@ export default class App extends Component {
 
   isPositionValid(position) {
 
-
     const { grid } = this.state;
 
     const { x, y } = position;
 
-    console.log(`is valid x: ${x} y: ${y}`)
-
     if (x < 0 || y < 0) {
-      console.log(false)
+      
       return false;
     }
 
-    const result = (grid.length - 1) >= x && (grid[x].length - 1) >= y;
-
-    console.log(result);
-
-    return result;
+    return (grid.length - 1) >= x && (grid[x].length - 1) >= y;
   }
 
   makeMove(column, to) {
