@@ -130,7 +130,8 @@ export default class App extends Component {
       grid: chessGrid,
       selectedPosition: null,
       highlightSelectedPosition: false,
-      colorToMove: "white"
+      colorToMove: "white",
+      availableMovePositions: []
     }
   }
   render() {
@@ -163,9 +164,13 @@ export default class App extends Component {
   }
 
   getColumnClassName(column, position) {
-    const { selectedPosition, highlightSelectedPosition } = this.state;
+    const { selectedPosition, highlightSelectedPosition, availableMovePositions } = this.state;
 
     if (selectedPosition !== null && selectedPosition.x === position.x && selectedPosition.y === position.y && highlightSelectedPosition) {
+      return "grid-highlighed";
+    }
+
+    if (availableMovePositions.some(item => item.x === position.x && item.y === position.y)) {
       return "grid-highlighed";
     }
 
@@ -174,11 +179,42 @@ export default class App extends Component {
 
   onClick(position) {
 
-    const { selectedPosition, grid } = this.state;
+    const { selectedPosition, colorToMove } = this.state;
 
     if (selectedPosition === null) {
-      const containsPiece = grid[position.x][position.y].piece !== null;
-      this.setState({ selectedPosition: position, highlightSelectedPosition: containsPiece })
+      
+      const piece = this.getColumnAt(position).piece;
+
+      let availableMovePositions = [];
+
+      if (piece !== null && piece.color === colorToMove) {
+        if (piece.type === "knight") {
+          const a = { x: position.x + 2, y: position.y - 1 };
+          const b = { x: position.x + 2, y: position.y + 1 };
+          const c = { x: position.x - 2, y: position.y + 1 };
+          const d = { x: position.x - 2, y: position.y - 1 };
+          const e = { x: position.x - 1, y: position.y - 2 };
+          const f = { x: position.x + 1, y: position.y - 2 };
+          const g = { x: position.x - 1, y: position.y + 2 };
+          const h = { x: position.x + 1, y: position.y + 2 };
+          availableMovePositions.push(a, b, c, d, e, f, g, h);
+          availableMovePositions = availableMovePositions.filter(available => {
+
+            if (this.isPositionValid(available)) {
+              
+              const availablePositionColumn = this.getColumnAt(available);
+              if (availablePositionColumn.piece === null) {
+                return true;
+              }
+              return availablePositionColumn.piece !== null && availablePositionColumn.piece.color !== piece.color;
+            }
+
+            return false;
+          })
+        }
+      }
+
+      this.setState({ selectedPosition: position, highlightSelectedPosition: piece !== null, availableMovePositions })
       return;
     }
 
@@ -193,7 +229,7 @@ export default class App extends Component {
       return;
     }
 
-    if (selectedColumn.piece.color !== this.state.colorToMove) {
+    if (selectedColumn.piece.color !== colorToMove) {
       this.setState({ selectedPosition: null });
       return;
     }
@@ -207,7 +243,7 @@ export default class App extends Component {
 
     const updated = this.makeMove(selectedColumn, position);
 
-    this.setState({ grid: updated, selectedPosition: null, colorToMove: this.toogleColorToMove() });
+    this.setState({ grid: updated, selectedPosition: null, colorToMove: this.toogleColorToMove(), availableMovePositions: [] });
   }
 
   toogleColorToMove() {
@@ -225,6 +261,27 @@ export default class App extends Component {
     const { grid } = this.state;
 
     return grid[coords.x][coords.y];
+  }
+
+  isPositionValid(position) {
+
+
+    const { grid } = this.state;
+
+    const { x, y } = position;
+
+    console.log(`is valid x: ${x} y: ${y}`)
+
+    if (x < 0 || y < 0) {
+      console.log(false)
+      return false;
+    }
+
+    const result = (grid.length - 1) >= x && (grid[x].length - 1) >= y;
+
+    console.log(result);
+
+    return result;
   }
 
   makeMove(column, to) {
