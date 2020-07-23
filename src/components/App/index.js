@@ -177,12 +177,105 @@ export default class App extends Component {
     return this.isLightColumn(column) ? "grid-light-column" : "grid-dark-column"
   }
 
+  diagonalPositions(piece, position) {
+
+    const positions = [];
+
+    for (let x_index = position.x - 1, y_index = position.y - 1;
+      x_index >= 0 && y_index >= 0;
+      x_index--, y_index--) {
+
+      const candidate = { x: x_index, y: y_index };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+    }
+
+    for (let x_index = position.x - 1, y_index = position.y + 1;
+      x_index >= 0 && y_index <= 7;
+      x_index--, y_index++) {
+
+      const candidate = { x: x_index, y: y_index };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+
+      // positions.push({ x: x_index, y: y_index })
+    }
+
+    for (let x_index = position.x + 1, y_index = position.y - 1;
+      x_index <= 7 && y_index >= 0;
+      x_index++, y_index--) {
+
+      const candidate = { x: x_index, y: y_index };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+    }
+
+    for (let x_index = position.x + 1, y_index = position.y + 1;
+      x_index <= 7 && y_index <= 7;
+      x_index++, y_index++) {
+
+      const candidate = { x: x_index, y: y_index };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+    }
+
+    return positions;
+  }
+
   onClick(position) {
 
     const { selectedPosition, colorToMove } = this.state;
 
     if (selectedPosition === null) {
-      
+
       const piece = this.getColumnAt(position).piece;
 
       let availableMovePositions = [];
@@ -201,7 +294,7 @@ export default class App extends Component {
           availableMovePositions = availableMovePositions.filter(available => {
 
             if (this.isPositionValid(available)) {
-              
+
               const availablePositionColumn = this.getColumnAt(available);
               if (availablePositionColumn.piece === null) {
                 return true;
@@ -211,6 +304,10 @@ export default class App extends Component {
 
             return false;
           })
+        }
+
+        if (piece.type === "bishop") {
+          availableMovePositions = this.diagonalPositions(piece, position);
         }
       }
 
@@ -237,7 +334,7 @@ export default class App extends Component {
     const destinationColumn = this.getColumnAt(position);
 
     if (destinationColumn.piece !== null && destinationColumn.piece.color === selectedColumn.piece.color) {
-      this.setState({ selectedPosition: position })
+      this.setState({ selectedPosition: position }) //TODO: null available moves
       return;
     }
 
@@ -270,7 +367,7 @@ export default class App extends Component {
     const { x, y } = position;
 
     if (x < 0 || y < 0) {
-      
+
       return false;
     }
 
