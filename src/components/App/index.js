@@ -177,6 +177,91 @@ export default class App extends Component {
     return this.isLightColumn(column) ? "grid-light-column" : "grid-dark-column"
   }
 
+  horizontalPositions(piece, position){
+    const positions = [];
+
+    for (let y = position.y + 1; y <= 7; y++) {
+      const candidate = { x: position.x, y };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+    }
+
+    for (let y = position.y - 1; y >= 0; y--) {
+      const candidate = { x: position.x, y };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+    }
+
+    return positions;
+  }
+
+  veritacalPositions(piece, position){
+    
+    const positions = [];
+
+    for (let x = position.x + 1; x <= 7; x++) {
+      const candidate = { x, y: position.y };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+    }
+
+    for (let x = position.x - 1; x >= 0; x--) {
+      const candidate = { x, y: position.y };
+
+      const column = this.getColumnAt(candidate);
+
+      if (column.piece === null) {
+        positions.push(candidate);
+        continue;
+      }
+      if (column.piece.color === piece.color) {
+        break;
+      }
+      if (column.piece.color !== piece.color) {
+        positions.push(candidate);
+        break;
+      }
+    }
+
+    return positions;
+  }
+
   diagonalPositions(piece, position) {
 
     const positions = [];
@@ -306,6 +391,10 @@ export default class App extends Component {
 
         if (piece.type === "bishop") {
           availableMovePositions = this.diagonalPositions(piece, position);
+        }
+
+        if (piece.type === "rook") {
+          availableMovePositions = this.veritacalPositions(piece, position).concat(this.horizontalPositions(piece, position));
         }
       }
 
