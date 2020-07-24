@@ -425,7 +425,7 @@ export default class App extends Component {
     const destinationColumn = this.getColumnAt(position);
 
     if (destinationColumn.piece !== null && destinationColumn.piece.color === selectedColumn.piece.color) {
-      this.setState({ selectedPosition: position, availableMovePositions: [] }) //TODO: null available moves
+      this.setState({ selectedPosition: position, availableMovePositions: [] })
       return;
     }
 
