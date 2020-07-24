@@ -177,7 +177,7 @@ export default class App extends Component {
     return this.isLightColumn(column) ? "grid-light-column" : "grid-dark-column"
   }
 
-  horizontalPositions(piece, position){
+  horizontalPositions(piece, position) {
     const positions = [];
 
     for (let y = position.y + 1; y <= 7; y++) {
@@ -219,8 +219,8 @@ export default class App extends Component {
     return positions;
   }
 
-  veritacalPositions(piece, position){
-    
+  veritacalPositions(piece, position) {
+
     const positions = [];
 
     for (let x = position.x + 1; x <= 7; x++) {
@@ -395,6 +395,10 @@ export default class App extends Component {
 
         if (piece.type === "rook") {
           availableMovePositions = this.veritacalPositions(piece, position).concat(this.horizontalPositions(piece, position));
+        }
+        if (piece.type === "queen") {
+          availableMovePositions =
+            availableMovePositions.concat(this.diagonalPositions(piece, position), this.veritacalPositions(piece, position), this.horizontalPositions(piece, position));
         }
       }
 
