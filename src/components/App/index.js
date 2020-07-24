@@ -221,8 +221,6 @@ export default class App extends Component {
         positions.push(candidate);
         break;
       }
-
-      // positions.push({ x: x_index, y: y_index })
     }
 
     for (let x_index = position.x + 1, y_index = position.y - 1;
@@ -334,7 +332,7 @@ export default class App extends Component {
     const destinationColumn = this.getColumnAt(position);
 
     if (destinationColumn.piece !== null && destinationColumn.piece.color === selectedColumn.piece.color) {
-      this.setState({ selectedPosition: position }) //TODO: null available moves
+      this.setState({ selectedPosition: position, availableMovePositions: [] }) //TODO: null available moves
       return;
     }
 
