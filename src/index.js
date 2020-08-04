@@ -1,11 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import ChessGame from './components/ui/ChessGame'
 import App from './components/App'
+
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ChessGame />
   </React.StrictMode>,
   document.getElementById('root')
 );

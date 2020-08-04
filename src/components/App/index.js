@@ -124,6 +124,7 @@ const chessGrid = [
 ]
 
 export default class App extends Component {
+  board;
   constructor(props) {
     super(props);
     this.state = {
