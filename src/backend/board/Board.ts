@@ -1,21 +1,24 @@
-import * as pieces from './../pieces/Pieces';
+import * as pieces from '../pieces/Pieces';
+import Piece from '../pieces/Piece';
 
 export class Board {
 
-    grid;
+    grid: BoardColumn[][];
+    maxX: number;
+    maxY: number;
 
     constructor() {
         this.maxX = 8;
         this.maxY = 8;
-        this.grid = Array(this.maxY).fill().map(() => Array(this.maxX).fill())
+        this.grid = Array(this.maxY).fill(null).map(() => Array(this.maxX).fill(null))
         this.putPieces();
     }
 
-    forEachColumn(selector) {
+    forEachColumn<T>(selector: (c: BoardColumn, x: number, y: number) => T): T[][] {
         return this.grid.map((row, y) => row.map((column, x) => selector(column, x, y)))
     }
 
-    putPieces() {
+    putPieces(): void {
 
         this.initColumn(0, 0, pieces.whiteRook);
         this.initColumn(0, 1, pieces.whiteKnight);
@@ -90,35 +93,39 @@ export class Board {
         this.initColumn(7, 7, pieces.blackRook);
     }
 
-    initColumn(y, x, piece = null) {
+    initColumn(y: number, x: number, piece?: Piece): void {
         const color = this.getColumnColor(x, y);
-        const boardPiece = piece !== null ? new BoardPiece(this, piece) : null;
+        const boardPiece = piece != null ? new BoardPiece(this, piece) : null;
         this.grid[y][x] = new BoardColumn(color, boardPiece);
     }
 
-    getColumnColor(x, y) {
+    getColumnColor(x: number, y: number): BoardColumnColor {
 
         if (y % 2 === 0) {
-            return x % 2 === 0 ? "light" : "dark";
+            return x % 2 === 0 ? BoardColumnColor.Light : BoardColumnColor.Dark;
         }
 
-        return x % 2 === 0 ? "dark" : "light";
+        return x % 2 === 0 ? BoardColumnColor.Dark : BoardColumnColor.Light;
     }
 }
 
-class BoardColumn {
-    piece;
-    color;
-    constructor(color, piece) {
+export class BoardColumn {
+    piece: BoardPiece | null;
+    color: BoardColumnColor;
+    constructor(color: BoardColumnColor, piece: BoardPiece | null) {
         this.piece = piece;
         this.color = color;
     }
 }
 
-class BoardPiece {
-    board;
-    piece;
-    constructor(board, piece) {
+export enum BoardColumnColor {
+    Light, Dark
+}
+
+export class BoardPiece {
+    board: Board;
+    piece: Piece;
+    constructor(board: Board, piece: Piece) {
         this.board = board;
         this.piece = piece;
     }
